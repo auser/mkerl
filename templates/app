@@ -1,0 +1,12 @@
+{application, <%= name %>,
+ [
+  {description, "<%= name %> app"},
+  {vsn, "<%= version %>"},
+  {id, "<%= name %>"},
+  {modules,      []},
+  {registered,   []},
+  {applications, [kernel, stdlib, sasl]},
+  {mod, {<%= name %>_app, []}},
+  {env, []}
+ ]
+}.

@@ -7,11 +7,16 @@ require "mkerl"
 
 args = ARGV.dup
 
-if args.size < 1
+def usage
   puts "Usage: mkerl name [directory] [version]"
   exit
+end
+
+if args.size < 1
+  usage
 else
   name = args.shift.strip
+  usage if %w(-h help).include?(name)
   directory = args.empty? ? File.join(Dir.pwd, name) : args.shift.strip
   version = args.empty? ? 0.1 : args.shift.strip.to_f
   Mkerl.new(name, directory, version).run

@@ -53,6 +53,7 @@ class Mkerl
   def add_basic_files
     write_template_to("basic_file.erl", File.join("src", "#{name}.erl"))
     write_template_to("start.sh", "start.sh", :chmod => 0755)
+    write_template_to("README.markdown")
     write_template_to("make_boot.erl", File.join("src", "make_boot.erl"))
     write_template_to("reloader.erl", File.join("src", "reloader.erl"))
     write_template_to("supervisor.erl", File.join("src", "#{name}_sup.erl"))

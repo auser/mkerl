@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mkerl}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ari Lerner"]
-  s.date = %q{2010-04-28}
+  s.date = %q{2010-04-29}
   s.default_executable = %q{mkerl}
   s.description = %q{This includes tests, reloader, an application, supervisor and a boot file. It's pretty slick}
   s.email = %q{arilerner@mac.com}
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/mkerl",
      "lib/mkerl.rb",
+     "mkerl.gemspec",
      "templates/Emakefile",
      "templates/Makefile",
      "templates/README.markdown",

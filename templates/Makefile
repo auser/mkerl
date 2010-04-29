@@ -6,7 +6,8 @@ EBIN_DIR := ./ebin
 EMULATOR := beam
 ERL = `which erl`
 ERLC = `which erlc`
-DOC_DIR = ../doc
+DOC_DIR = ./doc
+ERLDIR = $(erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell)
 SILENCE = @
 
 ERL_SOURCE_DIRS = \
@@ -15,17 +16,17 @@ ERL_SOURCE_DIRS = \
 TEST_DIRS = \
 	./test/src
 
+DEPS_DIRS = \
+	./ebin
+
 ####### 
 ## DON'T EDIT BELOW HERE, UNLESS YOU REALLY KNOW WHAT YOU ARE DOING
 #######
 
-ERL_SOURCES := $(wildcard src/*.erl)
-TEST_SOURCES := $(wildcard ../etest/test_*.erl)
-ERLDIR = $(erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell)
-
 #Helper Functions
 get_src_from_dir  = $(wildcard $1/*.erl)
-get_src_from_dir_list = $(foreach dir, $1, $(call get_src_from_dir,$(dir)))				        
+get_src_from_dir_list = $(foreach dir, $1, $(call get_src_from_dir,$(dir)))
+prefix_each_dir = $(foreach dir, $1, -pa $(dir))
 src_to_beam = $(subst ./src, ./ebin, $(subst .erl,.beam,$1))
 # src_to_beam = $(subst .erl,.beam,$1)
 
@@ -37,7 +38,10 @@ TEST_SRC = $(call get_src_from_dir_list, $(TEST_DIRS))
 TEST_OBJ = $(call src_to_beam,$(TEST_SRC))
 STUFF_TO_CLEAN += $(TEST_OBJ)
 
+PA_EBIN_DIRS = $(call prefix_each_dir, $(DEPS_DIRS))
+
 DOC_FILES = $(DOC_DIR)/*.html $(DOC_DIR)/*.png $(DOC_DIR)/*.css $(DOC_DIR)/edoc-info
+STUFF_TO_CLEAN += $(DOC_FILES)
 
 ALL_OBJ = $(OBJ) $(TEST_OBJ)
 ALL_SRC = $(SRC) $(TEST_SRC)
@@ -59,14 +63,14 @@ debug:
 	$(MAKE) DEBUG=-DDEBUG
 	
 test: all $(TEST_OBJ)
-	$(SILENCE) $(ERL)	-noshell \
-					-sname local_test \
-					-pa $(EBIN_DIR) \
-					-s test_suite test \
+	$(SILENCE) $(ERL)	-noshell 	\
+					-sname local_test 	\
+					$(PA_EBIN_DIRS) 		\
+					-s test_suite test 	\
 					-s init stop
 
 boot: all
-	$(SILENCE) $(ERL) -pa $(EBIN_DIR) -noshell -run make_boot write_scripts $(PACKAGE_NAME) $(VSN)
+	$(SILENCE) $(ERL) $(PA_EBIN_DIRS) -noshell -run make_boot write_scripts $(PACKAGE_NAME) $(VSN)
 	$(SILENCE) mv $(PACKAGE_NAME)-$(VSN).boot $(EBIN_DIR)
 	$(SILENCE) mv $(PACKAGE_NAME)-$(VSN).rel $(EBIN_DIR)
 	$(SILENCE) mv $(PACKAGE_NAME)-$(VSN).script $(EBIN_DIR)

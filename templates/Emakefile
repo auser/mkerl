@@ -1,4 +1,6 @@
-{ [ 'src/*', 
+{ [ 
+    'deps/*/src/*',
+    'src/*', 
     'src/*/*'
     ], [
   {i, "include"},

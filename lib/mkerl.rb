@@ -78,5 +78,4 @@ class Mkerl
     template = ERB.new open(File.join(File.dirname(__FILE__), "..", "templates", file)).read
     template.result(binding)
   end
-  
 end

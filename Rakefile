@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "mkerl"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A template to start erlang projects.}
+    gem.description = %Q{This includes tests, reloader, an application, supervisor and a boot file. It's pretty slick}
     gem.email = "arilerner@mac.com"
     gem.homepage = "http://github.com/auser/mkerl"
     gem.authors = ["Ari Lerner"]

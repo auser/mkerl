@@ -8,7 +8,7 @@ ERL = `which erl`
 ERLC = `which erlc`
 DOC_DIR = ./doc
 ERLDIR = $(erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell)
-SILENCE = @
+SILENCE = 
 
 ERL_SOURCE_DIRS = \
 	./src
@@ -16,7 +16,7 @@ ERL_SOURCE_DIRS = \
 TEST_DIRS = \
 	./test/src
 
-DEPS_DIRS = \
+EBIN_DIRS = \
 	./ebin
 
 ####### 
@@ -38,7 +38,8 @@ TEST_SRC = $(call get_src_from_dir_list, $(TEST_DIRS))
 TEST_OBJ = $(call src_to_beam,$(TEST_SRC))
 STUFF_TO_CLEAN += $(TEST_OBJ)
 
-PA_EBIN_DIRS = $(call prefix_each_dir, $(DEPS_DIRS))
+DEPS_DIRS = $(wildcard deps/*)
+PA_EBIN_DIRS = $(call prefix_each_dir, $(EBIN_DIRS) ($DEPS_DIRS))
 
 DOC_FILES = $(DOC_DIR)/*.html $(DOC_DIR)/*.png $(DOC_DIR)/*.css $(DOC_DIR)/edoc-info
 STUFF_TO_CLEAN += $(DOC_FILES)
@@ -47,7 +48,8 @@ ALL_OBJ = $(OBJ) $(TEST_OBJ)
 ALL_SRC = $(SRC) $(TEST_SRC)
  
 all: $(OBJ)
-	
+	$(SILENCE)set -e; for dir in ${DEPS_DIRS} ; do (cd $$dir; $(MAKE) all); done
+
 docs:
 	$(SILENCE) $(ERL) -noshell -run edoc_run application "'$(PACKAGE_NAME)'" '"."' '[{def,{vsn,"$(VSN)"}}, {dir, "$(DOC_DIR)"}]'
 
@@ -58,6 +60,9 @@ $(OBJ): $(SRC)
 $(TEST_OBJ): $(TEST_SRC)
 	$(SILENCE)echo compiling $(notdir $@)
 	$(SILENCE)$(ERLC) $(ERLC_FLAGS) -I./include -o $(EBIN_DIR) $^
+
+clean_deps:
+	$(SILENCE)set -e; for dir in ${DEPS_DIRS} ; do (cd $$dir; $(MAKE) clean); done
 
 debug:
 	$(MAKE) DEBUG=-DDEBUG
@@ -75,6 +80,5 @@ boot: all
 	$(SILENCE) mv $(PACKAGE_NAME)-$(VSN).rel $(EBIN_DIR)
 	$(SILENCE) mv $(PACKAGE_NAME)-$(VSN).script $(EBIN_DIR)
 
-clean:
+clean: clean_deps
 	@(rm -rf $(EBIN_DIR)/*.beam erl_crash.dump $(DOC_FILES))
- 
